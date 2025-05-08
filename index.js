@@ -526,7 +526,7 @@ const view_transactions_table = (db, formDataObject, current_user) => {
         console.log("get_transaction_history: ",current_user)
         // where ${condition_statement}
         db.exec({
-            sql: `select * from TRANSACTION_TABLE NATURAL JOIN CUSTOMER NATURAL JOIN APPEARS_IN where ${condition_statement}`,
+            sql: `select distinct bid, ccnumber, cid, saname, tdate, ttag,cid from TRANSACTION_TABLE NATURAL JOIN CUSTOMER NATURAL JOIN APPEARS_IN where ${condition_statement}`,
             rowMode: 'array', // 'array' (default), 'object', or 'stmt'
             callback: function (row) {
                 console.log("row ", ++this.counter, "=", row);
@@ -699,6 +699,29 @@ const check_shipping_address = (db, cid, saname, current_user) => {
     }
     return false;
 }
+const insert_shipping_address = (db, formDataObject, current_user) => {
+    let cid = "";
+    try {
+        //  customers
+        db.exec({
+            sql: `select cid from CUSTOMER WHERE email = \'${current_user}\'`,
+            rowMode: 'array', // 'array' (default), 'object', or 'stmt'
+            callback: function (row) {
+                console.log("row ", ++this.counter, "=", row);
+                cid = `${row[0]}`
+            }.bind({ counter: 0 })
+        });
+        if (cid === "")
+            return;
+        db.exec({
+            sql: "insert into SHIPPING_ADDRESS(CID,SANAME,RecipientName, Street, SNUmber, city, zip, state, country) values ($a,$b, $c, $d, $e, $f, $g, $h, $i)",
+            bind: { $a: cid, $b: formDataObject["edit_shipping_address_saname"], $c: formDataObject["edit_shipping_address_recipientName"], $d: formDataObject["edit_shipping_address_street"], $e: formDataObject["edit_shipping_address_snumber"], $f: formDataObject["edit_shipping_address_city"], $g: formDataObject["edit_shipping_address_zip"], $h: formDataObject["edit_shipping_address_state"], $i: formDataObject["edit_shipping_address_country"] }
+        });
+    }
+    catch (error) {
+        console.log(error)
+    }
+}
 
 const update_shipping_address = (db, formDataObject, current_user) => {
     console.log("edit shipping_address_attributes...");
@@ -710,8 +733,10 @@ const update_shipping_address = (db, formDataObject, current_user) => {
     }
     // console.log("update credit card valid cc number", valid_cc_number)
     console.log(valid_sa_key)
-    if (!valid_sa_key)
+    if (!valid_sa_key) {
+        insert_shipping_address(db, formDataObject, current_user);
         return;
+    }
     // if (formDataObject["edit_shipping_address_cid"] != "") {
     //     update_statement += `cid = \'${formDataObject["edit_shipping_address_cid"]}\',`
     // }
@@ -798,6 +823,29 @@ const check_credit_card = (db, ccnumber, current_user) => {
     }
     return false;
 }
+const insert_credit_card = (db, formDataObject, current_user) => {
+    let cid = "";
+    try {
+        //  customers
+        db.exec({
+            sql: `select cid from CUSTOMER WHERE email = \'${current_user}\'`,
+            rowMode: 'array', // 'array' (default), 'object', or 'stmt'
+            callback: function (row) {
+                console.log("row ", ++this.counter, "=", row);
+                cid = `${row[0]}`
+            }.bind({ counter: 0 })
+        });
+        if (cid === "")
+            return;
+        db.exec({
+            sql: "insert into CREDIT_CARD(CCNUMBER,SECNUMBER,OWNERNAME, CCTYPE, BILADDRESS, EXPDATE, STOREDCARDCID) values ($a,$b, $c, $d, $e, $f, $g)",
+            bind: { $a: formDataObject["edit_credit_card_ccnumber"], $b: formDataObject["edit_credit_card_secnumber"], $c: formDataObject["edit_credit_card_ownername"], $d: formDataObject["edit_credit_card_cctype"], $e: formDataObject["edit_credit_card_bilAddress"], $f: formDataObject["edit_credit_card_expDate"], $g: cid }
+        });
+    }
+    catch (error) {
+        console.log(error)
+    }
+}
 const update_credit_card = (db, formDataObject, current_user) => {
     console.log("edit credit_card_attributes...");
     console.log(formDataObject)
@@ -806,8 +854,10 @@ const update_credit_card = (db, formDataObject, current_user) => {
         valid_cc_number = check_credit_card(db, formDataObject["edit_credit_card_ccnumber_to_edit"], current_user)
     }
     // console.log("update credit card valid cc number", valid_cc_number)
-    if (!valid_cc_number)
-        return;
+    if (!valid_cc_number) {
+        insert_credit_card(db,formDataObject, current_user)
+        return
+    }
     let update_statement = "set "
     if (formDataObject["edit_credit_card_ccnumber"] != "") {
         update_statement += `ccnumber = \'${formDataObject["edit_credit_card_ccnumber"]}\',`
@@ -1015,7 +1065,7 @@ const query_credit_card_total_amount = (db) => {
     console.log("Query credit_card_total_amount");
     result = []
     db.exec({
-        sql: "select CREDIT_CARD.CCNUMBER, SUM(PRICESOLD) from CREDIT_CARD NATURAL JOIN TRANSACTION_TABLE NATURAL JOIN APPEARS_IN WHERE TRANSACTION_TABLE.TTAG != \'NOT CONFIRMED\' GROUP BY CREDIT_CARD.CCNUMBER",
+        sql: "select CREDIT_CARD.CCNUMBER, SUM(PRICESOLD*Quantity) from CREDIT_CARD NATURAL JOIN TRANSACTION_TABLE NATURAL JOIN APPEARS_IN WHERE TRANSACTION_TABLE.TTAG != \'NOT CONFIRMED\' GROUP BY CREDIT_CARD.CCNUMBER",
         rowMode: 'array', // 'array' (default), 'object', or 'stmt'
         callback: function (row) {
             console.log("row ", ++this.counter, "=", row);
@@ -1032,7 +1082,7 @@ const query_best_customers = (db) => {
     console.log("Query best_customers");
     result = []
     db.exec({
-        sql: "select CUSTOMER.CID, FNAME, LNAME, SUM(PRICESOLD) from CUSTOMER NATURAL JOIN TRANSACTION_TABLE NATURAL JOIN APPEARS_IN WHERE TRANSACTION_TABLE.TTAG != \'NOT CONFIRMED\' GROUP BY CUSTOMER.CID ORDER BY SUM(PRICESOLD) DESC limit 10",
+        sql: "select CUSTOMER.CID, FNAME, LNAME, SUM(PRICESOLD*quantity) from CUSTOMER NATURAL JOIN TRANSACTION_TABLE NATURAL JOIN APPEARS_IN WHERE TRANSACTION_TABLE.TTAG != \'NOT CONFIRMED\' GROUP BY CUSTOMER.CID ORDER BY SUM(PRICESOLD*quantity) DESC limit 10",
         rowMode: 'array', // 'array' (default), 'object', or 'stmt'
         callback: function (row) {
             console.log("row ", ++this.counter, "=", row);
@@ -1224,6 +1274,98 @@ const populate_data = (db) => {
             sql: "insert into LAPTOP(PID,BTYPE, WEIGHT) values ($a,$b, $c)",
             bind: { $a: "P003", $b: "Ultrabook", $c: "1.25 kg" }
         });
+        // customers
+        db.exec({
+            sql: "insert into CUSTOMER(CID,FNAME,LNAME, EMAIL, ADDRESS, PHONE, STATUS) values ($a,$b, $c, $d, $e, $f, $g)",
+            bind: { $a: "C005", $b: "emma", $c: "davis", $d: "emma@examples.com", $e: "987 Cedar St", $f: "5678901234", $g: "silver" }
+        });
+        db.exec({
+            sql: "insert into CUSTOMER(CID,FNAME,LNAME, EMAIL, ADDRESS, PHONE, STATUS) values ($a,$b, $c, $d, $e, $f, $g)",
+            bind: { $a: "C006", $b: "frank", $c: "miller", $d: "frank@examples.com", $e: "654 Birch Rd", $f: "6789012345", $g: "regular" }
+        });
+
+        // silver_and_above
+        db.exec({
+            sql: "insert into SILVER_AND_ABOVE(CID,CREDITLINE) values ($a,$b)",
+            bind: { $a: "C005", $b: 3000 }
+        });
+
+        // credit card
+        db.exec({
+            sql: "insert into CREDIT_CARD(CCNUMBER,SECNUMBER, OWNERNAME, CCTYPE, BILADDRESS, EXPDATE, STOREDCARDCID) values ($a,$b,$c,$d,$e,$f,$g)",
+            bind: { $a: "CC004", $b: "444", $c: "Emma Davis", $d: "Visa", $e: "987 Cedar St", $f: "2026-11-30", $g: "C005" }
+        });
+        db.exec({
+            sql: "insert into CREDIT_CARD(CCNUMBER,SECNUMBER, OWNERNAME, CCTYPE, BILADDRESS, EXPDATE, STOREDCARDCID) values ($a,$b,$c,$d,$e,$f,$g)",
+            bind: { $a: "CC005", $b: "555", $c: "Frank Miller", $d: "Discover", $e: "654 Birch Rd", $f: "2027-01-15", $g: "C006" }
+        });
+
+        // shipping address
+        db.exec({
+            sql: "insert into SHIPPING_ADDRESS(CID,SANAME, RECIPIENTNAME, STREET, SNUMBER, CITY, ZIP, STATE, COUNTRY) values ($a,$b,$c,$d,$e,$f,$g,$h,$i)",
+            bind: { $a: "C005", $b: "OFFICE", $c: "EMMA DAVIS", $d: "987 CEDAR ST", $e: "4", $f: "SEATTLE", $g: "54321", $h: "WA", $i: "USA" }
+        });
+        db.exec({
+            sql: "insert into SHIPPING_ADDRESS(CID,SANAME, RECIPIENTNAME, STREET, SNUMBER, CITY, ZIP, STATE, COUNTRY) values ($a,$b,$c,$d,$e,$f,$g,$h,$i)",
+            bind: { $a: "C006", $b: "HOME", $c: "FRANK MILLER", $d: "654 BIRCH RD", $e: "5", $f: "AUSTIN", $g: "76543", $h: "TX", $i: "USA" }
+        });
+
+        // basket
+        db.exec({
+            sql: "insert into BASKET(BID,CID) values ($a,$b)",
+            bind: { $a: "B004", $b: "C005" }
+        });
+        db.exec({
+            sql: "insert into BASKET(BID,CID) values ($a,$b)",
+            bind: { $a: "B005", $b: "C006" }
+        });
+
+        // transaction
+        db.exec({
+            sql: "insert into TRANSACTION_TABLE(BID,CCNUMBER, CID, SANAME, TDATE, TTAG) values ($a,$b,$c,$d,$e,$f)",
+            bind: { $a: "B004", $b: "CC004", $c: "C005", $d: "OFFICE", $e: "2025-05-04", $f: "DELIVERED" }
+        });
+        db.exec({
+            sql: "insert into TRANSACTION_TABLE(BID,CCNUMBER, CID, SANAME, TDATE, TTAG) values ($a,$b,$c,$d,$e,$f)",
+            bind: { $a: "B005", $b: "CC005", $c: "C006", $d: "HOME", $e: "2025-05-05", $f: "NOT CONFIRMED" }
+        });
+
+        // product
+        db.exec({
+            sql: "insert into PRODUCT(PID,PTYPE, PNAME, PPRICE, DESCRIPTION, PQUANTITY) values ($a,$b,$c,$d,$e,$f)",
+            bind: { $a: "P004", $b: "TABLET", $c: "GALAXY TAB", $d: 600.00, $e: "ANDROID TABLET", $f: 30 }
+        });
+        db.exec({
+            sql: "insert into PRODUCT(PID,PTYPE, PNAME, PPRICE, DESCRIPTION, PQUANTITY) values ($a,$b,$c,$d,$e,$f)",
+            bind: { $a: "P005", $b: "PRINTER", $c: "CANON PIXMA", $d: 180.00, $e: "INKJET PRINTER", $f: 25 }
+        });
+
+        // appears_in
+        db.exec({
+            sql: "insert into APPEARS_IN(BID,PID, QUANTITY, PRICESOLD) values ($a,$b,$c,$d)",
+            bind: { $a: "B004", $b: "P004", $c: 2, $d: 580.00 }
+        });
+        db.exec({
+            sql: "insert into APPEARS_IN(BID,PID, QUANTITY, PRICESOLD) values ($a,$b,$c,$d)",
+            bind: { $a: "B005", $b: "P005", $c: 1, $d: 170.00 }
+        });
+
+        // offer_product
+        db.exec({
+            sql: "insert into OFFER_PRODUCT(PID,OFFERPRICE) values ($a,$b)",
+            bind: { $a: "P004", $b: 550.00 }
+        });
+        db.exec({
+            sql: "insert into OFFER_PRODUCT(PID,OFFERPRICE) values ($a,$b)",
+            bind: { $a: "P005", $b: 160.00 }
+        });
+
+        // printer
+        db.exec({
+            sql: "insert into PRINTER(PID,PRINTERTYPE, RESOLUTION) values ($a,$b, $c)",
+            bind: { $a: "P005", $b: "Inkjet", $c: "600x600" }
+        });
+
         console.log("populated tables")
     } catch (error) {
         console.log(error)
