@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#registration_header">Register</a></li>
+                <li><a href="#online_sale_header">Sale</a></li>
+                <li><a href="#sale_statistics_header">Stats</a></li>
+            </ul>
+        </nav>
+    </header>
+    <button id="prepopulated_data">
+        Reinput Data
+    </button>
+    <!-- Registration, Credit Cards, Shipping Addresses -->
+    <h1 id="registration_header">Registration and Management</h1>
+    <h3> First Time Customers </h3>
+    <form id="registration" action="/registration" method="post">
+        <div>
+            <label for="registration_fname">first name: </label>
+            <input type="text" id="registration_fname" name="registration_fname" placeholder="Asif">
+        </div>
+        <div>
+            <label for="registration_lname">last name: </label>
+            <input type="text" id="registration_lname" name="registration_lname" placeholder="Uddin">
+        </div>
+        <div>
+            <label for="registration_email">email: </label>
+            <input type="text" id="registration_email" name="registration_email" placeholder="asifuddin@gmail.com">
+        </div>
+        <div>
+            <label for="registration_address">address: </label>
+            <input type="text" id="registration_address" name="registration_address" placeholder="NJIT">
+        </div>
+        <div>
+            <label for="registration_phone">phone: </label>
+            <input type="text" id="registration_phone" name="registration_phone" placeholder="1234567890">
+        </div>
+        <div>
+            <label for="registration_status">status: </label>
+            <input type="text" id="registration_status" name="registration_status" placeholder="Platinum">
+        </div>
+        <div>
+            <button type="submit">
+                Submit Registration
+            </button>
+        </div>
+    </form>
+    <h3>Returning Customers</h3>
+    <form id="login" action="/login" method="post">
+        <div>
+            <label for="login_email">email: </label>
+            <input type="text" id="login_email" name="login_email" placeholder="placeholder@example.com">
+        </div>
+        <div>
+            <button type="submit">
+                Login with Email
+            </button>
+        </div>
+    </form>
+    
+    <h3>View/Edit Registration Information</h3>
+    <div>
+        <button id="refresh_login">
+            Refresh Registration Information
+        </button>
+    </div>
+    <textarea id="registration_information_text_area"></textarea>
+    <form id="edit_registration" action="/edit_registration" method="post">
+        <div>
+            <label for="edit_registration_fname">first name: </label>
+            <input type="text" id="edit_registration_fname" name="edit_registration_fname">
+        </div>
+        <div>
+            <label for="edit_registration_lname">last name: </label>
+            <input type="text" id="edit_registration_lname" name="edit_registration_lname">
+        </div>
+        <div>
+            <label for="edit_registration_email">email: </label>
+            <input type="text" id="edit_registration_email" name="edit_registration_email">
+        </div>
+        <div>
+            <label for="edit_registration_address">address: </label>
+            <input type="text" id="edit_registration_address" name="edit_registration_address">
+        </div>
+        <div>
+            <label for="edit_registration_phone">phone: </label>
+            <input type="text" id="edit_registration_phone" name="edit_registration_phone">
+        </div>
+        <div>
+            <label for="edit_registration_status">status: </label>
+            <input type="text" id="edit_registration_status" name="edit_registration_status">
+        </div>
+        <div>
+            <button type="submit">
+                Edit Registration
+            </button>
+        </div>
+    </form>
+    <h2>Credit Cards</h2>
+    <button id="refresh_credit_card">
+        Refresh Credit Card Information
+    </button>
+    <h3>View/Edit Credit Card Information</h3>
+    <textarea id="credit_card_information_text_area"></textarea>
+    <form id="edit_credit_card" action="/edit_credit_card" method="post">
+        <div>
+            <label for="edit_credit_card_ccnumber_to_edit">CCNumber To Edit: </label>
+            <input type="text" id="edit_credit_card_ccnumber_to_edit" name="edit_credit_card_ccnumber_to_edit">
+        </div>
+        <div>
+            <label for="edit_credit_card_ccnumber">CCNumber: </label>
+            <input type="text" id="edit_credit_card_ccnumber" name="edit_credit_card_ccnumber">
+        </div>
+        <div>
+            <label for="edit_credit_card_secnumber">SecNumber: </label>
+            <input type="text" id="edit_credit_card_secnumber" name="edit_credit_card_secnumber">
+        </div>
+        <div>
+            <label for="edit_credit_card_ownername">Owner Name: </label>
+            <input type="text" id="edit_credit_card_ownername" name="edit_credit_card_ownername">
+        </div>
+        <div>
+            <label for="edit_credit_card_cctype">CCType: </label>
+            <input type="text" id="edit_credit_card_cctype" name="edit_credit_card_cctype">
+        </div>
+        <div>
+            <label for="edit_credit_card_bilAddress">BilAddress: </label>
+            <input type="text" id="edit_credit_card_bilAddress" name="edit_credit_card_bilAddress">
+        </div>
+        <div>
+            <label for="edit_credit_card_expDate">Exp Date: </label>
+            <input type="text" id="edit_credit_card_expDate" name="edit_credit_card_expDate">
+        </div>
+        <div>
+            <label for="edit_credit_card_storedcardcid">StoredCardCID: </label>
+            <input type="text" id="edit_credit_card_storedcardcid" name="edit_credit_card_storedcardcid">
+        </div>
+        <div>
+            <button type="submit">
+                Edit Credit Card Information
+            </button>
+        </div>
+    </form>
+    <h2>Shipping Addresses</h2>
+    <button id="refresh_shipping_address">
+        Refresh Shipping Address Information
+    </button>
+    <h3>View/Edit Shipping Address Information</h3>
+    <textarea id="shipping_address_information_text_area"></textarea>
+    <form id="edit_shipping_address" action="/edit_shipping_address" method="post">
+        <div>
+            <label for="edit_shipping_address_cid_to_edit">CID To Edit: </label>
+            <input type="text" id="edit_shipping_address_cid_to_edit" name="edit_shipping_address_cid_to_edit">
+        </div>
+        <div>
+            <label for="edit_shipping_address_saname_to_edit">SAName To Edit: </label>
+            <input type="text" id="edit_shipping_address_saname_to_edit" name="edit_shipping_address_saname_to_edit">
+        </div>
+        <!-- <div>
+                <label for="edit_shipping_address_cid">CID: </label>
+                <input type="text" id ="edit_shipping_address_cid" name="edit_shipping_address_cid" >
+            </div> -->
+        <div>
+            <label for="edit_shipping_address_saname">SAName: </label>
+            <input type="text" id="edit_shipping_address_saname" name="edit_shipping_address_saname">
+        </div>
+        <div>
+            <label for="edit_shipping_address_recipientName">Recipient Name: </label>
+            <input type="text" id="edit_shipping_address_recipientName" name="edit_shipping_address_recipientName">
+        </div>
+        <div>
+            <label for="edit_shipping_address_street">Street: </label>
+            <input type="text" id="edit_shipping_address_street" name="edit_shipping_address_street">
+        </div>
+        <div>
+            <label for="edit_shipping_address_snumber">SNumber: </label>
+            <input type="text" id="edit_shipping_address_snumber" name="edit_shipping_address_snumber">
+        </div>
+        <div>
+            <label for="edit_shipping_address_city">City: </label>
+            <input type="text" id="edit_shipping_address_city" name="edit_shipping_address_city">
+        </div>
+        <div>
+            <label for="edit_shipping_address_zip">ZIP: </label>
+            <input type="text" id="edit_shipping_address_zip" name="edit_shipping_address_zip">
+        </div>
+        <div>
+            <label for="edit_shipping_address_state">State: </label>
+            <input type="text" id="edit_shipping_address_state" name="edit_shipping_address_state">
+        </div>
+        <div>
+            <label for="edit_shipping_address_country">Country: </label>
+            <input type="text" id="edit_shipping_address_country" name="edit_shipping_address_country">
+        </div>
+
+        <div>
+            <button type="submit">
+                Edit Shipping Address Information
+            </button>
+        </div>
+    </form>
+
+    <h1 id="online_sale_header">Online Sale</h1>
+    <h2>
+        Basket
+    </h2>
+    <div>
+        <button id="new_basket">
+            New Basket
+        </button>
+    </div>
+    <div>
+        <button id="refresh_basket_information">
+            Refresh Basket Information
+        </button>
+    </div>
+    <div> 
+        <textarea id="basket_text_area"></textarea>
+    </div>
+    <form id="edit_basket" action="/edit_basket" method="post">
+        <div>
+            <label for="edit_basket_pid">PID: </label>
+            <input type="text" id="edit_basket_pid" name="edit_basket_pid">
+        </div>
+        <div>
+            <label for="edit_basket_quantity">Quantity: </label>
+            <input type="text" id="edit_basket_quantity" name="edit_basket_quantity">
+        </div>
+        <div>
+            <button type="submit">
+                Edit Basket
+            </button>
+        </div>
+    </form>
+    <h2>
+        Place an Order
+    </h2>
+    <form id="place_order" action="/place_order" method="post">
+        <div>
+            <label for="place_order_ccnumber">CCNumber (Required): </label>
+            <input type="text" id="place_order_ccnumber" name="place_order_ccnumber">
+        </div>
+        <div>
+            <label for="place_order_secnumber">SecNumber: </label>
+            <input type="text" id="place_order_secnumber" name="place_order_secnumber">
+        </div>
+        <div>
+            <label for="place_order_ownerName">Owner Name: </label>
+            <input type="text" id="place_order_ownerName" name="place_order_ownerName">
+        </div>
+        <div>
+            <label for="place_order_cctype">CC Type: </label>
+            <input type="text" id="place_order_cctype" name="place_order_cctype">
+        </div>
+        <div>
+            <label for="place_order_biladdress">Bil Address: </label>
+            <input type="text" id="place_order_biladdress" name="place_order_biladdress">
+        </div>
+        <div>
+            <label for="place_order_expDate">Exp Date: </label>
+            <input type="text" id="place_order_expDate" name="place_order_expDate">
+        </div>
+        <div>
+            <label for="place_order_saName">SA Name (Required): </label>
+            <input type="text" id="place_order_saName" name="place_order_saName">
+        </div>
+        <div>
+            <label for="place_order_recipient">Recipient Name: </label>
+            <input type="text" id="place_order_recipient" name="place_order_recipient">
+        </div>
+        <div>
+            <label for="place_order_street">Street: </label>
+            <input type="text" id="place_order_street" name="place_order_street">
+        </div>
+        <div>
+            <label for="place_order_snumber">SNumber: </label>
+            <input type="text" id="place_order_snumber" name="place_order_snumber">
+        </div>
+        <div>
+            <label for="place_order_city">City: </label>
+            <input type="text" id="place_order_city" name="place_order_city">
+        </div>
+        <div>
+            <label for="place_order_zip">Zip: </label>
+            <input type="text" id="place_order_zip" name="place_order_zip">
+        </div>
+        <div>
+            <label for="place_order_state">State: </label>
+            <input type="text" id="place_order_state" name="place_order_state">
+        </div>
+        <div>
+            <label for="place_order_country">Country: </label>
+            <input type="text" id="place_order_country" name="place_order_country">
+        </div>
+        <div>
+            <button type="submit">
+                Place an Order
+            </button>
+        </div>
+    </form>
+    <h2>
+        Order Status
+    </h2>
+    <div>
+        <button id="refresh_order_information">
+            Refresh Order Information
+        </button>
+    </div>
+    <div> 
+        <textarea id="check_order_information"></textarea>
+    </div>
+    <div>
+        <button id="order_delivered">
+            Order Delivered
+        </button>
+    </div>
+    <div>
+        <button id="order_not_delivered">
+            Order Not Delivered
+        </button>
+    </div>
+    <h2>
+        Transaction History
+    </h2>
+    
+    <div>
+        <textarea id="view_transaction_history_textarea"></textarea>
+    </div>
+    <form id="view_transaction_history" action="/view_transaction_history" method="post">
+        <div>
+            <label for="view_transaction_history_fname">First Name: </label>
+            <input type="text" id="view_transaction_history_fname" name="view_transaction_history_fname">
+        </div>
+        <div>
+            <label for="view_transaction_history_lname">Last Name: </label>
+            <input type="text" id="view_transaction_history_lname" name="view_transaction_history_lname">
+        </div>
+        <div>
+            <label for="view_transaction_history_pid">PID: </label>
+            <input type="text" id="view_transaction_history_pid" name="view_transaction_history_pid">
+        </div>
+        <div>
+            <label for="view_transaction_history_sdate">Start Date: </label>
+            <input type="text" id="view_transaction_history_sdate" name="view_transaction_history_sdate">
+        </div>
+        <div>
+            <label for="view_transaction_history_edate">End Date: </label>
+            <input type="text" id="view_transaction_history_edate" name="view_transaction_history_edate">
+        </div>
+        <div>
+            <button type="submit">
+                View Transaction History
+            </button>
+        </div>
+    </form>
+
+    <!-- Sale Statistics -->
+    <h1 id="sale_statistics_header">Sale Statistics</h1>
+    <h2>
+        Total Amount per Credit Card
+    </h2>
+    <div>
+        <textarea id="credit_card_total_amount_text_area" disabled></textarea>
+    </div>
+    <div>
+        <button id="credit_card_total_amount_button">
+            Query Total Amount per Credit Card
+        </button>
+    </div>
+    <h2>
+        10 best customers (descending order)
+    </h2>
+    <div>
+        <textarea id="best_customers_text_area" disabled></textarea>
+    </div>
+    <div>
+        <button id="best_customers_button">
+            Query Best Customers
+        </button>
+    </div>
+
+    <h2>
+        Most frequently sold products
+    </h2>
+    <form id="frequent_products" action="/frequent_products" method="post">
+        <div>
+            <label for="begin_date">Begin Date: </label>
+            <input type="text" id="frequent_products_form_begin_date" name="frequent_products_form_begin_date"
+                placeholder="YYYY-MM-DD">
+        </div>
+        <div>
+            <label for="end_date">End Date: </label>
+            <input type="text" id="frequent_products_form_end_date" name="frequent_products_form_end_date"
+                placeholder="YYYY-MM-DD">
+        </div>
+        <div>
+            <button type="submit">
+                Query Most Frequently Sold Products
+            </button>
+        </div>
+    </form>
+    <div>
+        <textarea id="frequent_products_text_area" disabled></textarea>
+    </div>
+    <h2>
+        Highest Number of Distinct Customers
+    </h2>
+    <form id="distinct_customers" action="/distinct_customers" method="post">
+        <div>
+            <label for="begin_date">Begin Date: </label>
+            <input type="text" id="distinct_customers_form_begin_date" name="distinct_customers_form_begin_date"
+                placeholder="YYYY-MM-DD">
+        </div>
+        <div>
+            <label for="end_date">End Date: </label>
+            <input type="text" id="distinct_customers_form_end_date" name="distinct_customers_form_end_date"
+                placeholder="YYYY-MM-DD">
+        </div>
+        <div>
+            <button type="submit">
+                Query Highest Number of Distinct Customers
+            </button>
+        </div>
+    </form>
+    <div>
+        <textarea id="distinct_customers_text_area" disabled></textarea>
+    </div>
+    <h2>
+        Compute the maximum basket total amount per credit card
+    </h2>
+    <form id="maximum_basket" action="/maximum_basket" method="post">
+        <div>
+            <label for="begin_date">Begin Date: </label>
+            <input type="text" id="maximum_basket_form_begin_date" name="maximum_basket_form_begin_date"
+                placeholder="YYYY-MM-DD">
+        </div>
+        <div>
+            <label for="end_date">End Date: </label>
+            <input type="text" id="maximum_basket_form_end_date" name="maximum_basket_form_end_date"
+                placeholder="YYYY-MM-DD">
+        </div>
+        <div>
+            <button type="submit">
+                Query Maximum Basket Total per Credit Card
+            </button>
+        </div>
+    </form>
+    <div>
+        <textarea id="maximum_basket_text_area" disabled></textarea>
+    </div>
+    <h2>
+        Compute the average selling product price per product type (desktop, laptop, and printer)
+    </h2>
+    <form id="average_product_price" action="/average_product_price" method="post">
+        <div>
+            <label for="begin_date">Begin Date: </label>
+            <input type="text" id="average_product_price_form_begin_date" name="average_product_price_form_begin_date"
+                placeholder="YYYY-MM-DD">
+        </div>
+        <div>
+            <label for="end_date">End Date: </label>
+            <input type="text" id="average_product_price_form_end_date" name="average_product_price_form_end_date"
+                placeholder="YYYY-MM-DD">
+        </div>
+        <div>
+            <button type="submit">
+                Query Average Selling Product Price Per Product Type
+            </button>
+        </div>
+    </form>
+    <div>
+        <textarea id="average_product_price_text_area" disabled></textarea>
+    </div>
+
+</body>
+<script src="sqlite3.js"></script>
+<script src="index.js"></script>
+
+</html>
